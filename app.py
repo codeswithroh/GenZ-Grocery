@@ -42,7 +42,10 @@ def signup():
         username = request.form['username']
         password = request.form['password']
 
-        create_user(username, password)
+        user_created = create_user(username, password)
+
+        if user_created:
+            return redirect(url_for('signin')) 
 
     return render_template('signup.html')
     
@@ -52,7 +55,10 @@ def signin():
         username = request.form['username']
         password = request.form['password']
 
-        signin_user(username, password)
+        user_signed_in = signin_user(username, password)
+
+        if user_signed_in :
+            return redirect(url_for('dashboard')) 
 
     return render_template('signin.html')
 

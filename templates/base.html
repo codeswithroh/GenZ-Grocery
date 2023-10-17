@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Authentication System</title>
     <link
       rel="stylesheet"
       href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
@@ -13,11 +12,21 @@
         --primary: #ff8400;
         --secondary: #fff5d6;
         --accent: #cf4307;
+        --danger: #f1aeb5;
+        --success: #a3cfbb;
       }
 
       body {
         background-color: var(--background);
         color: var(--text);
+      }
+
+      .alert-danger {
+        background-color: var(--danger);
+      }
+
+      .alert-success {
+        background-color: var(--success);
       }
 
       .container {
@@ -26,20 +35,28 @@
         max-width: 400px;
         margin-top: 10%;
       }
-
-      .form-group {
-        margin: 10px 0;
-      }
     </style>
+    <script>
+      // JavaScript to remove alerts after 3 seconds
+      document.addEventListener("DOMContentLoaded", function () {
+        let alerts = document.querySelectorAll(".alert");
+        alerts.forEach(function (alert) {
+          setTimeout(function () {
+            alert.style.display = "none";
+          }, 4000);
+        });
+      });
+    </script>
   </head>
   <body>
     <div class="container">
       {% with messages = get_flashed_messages() %} {% if messages %}
-      <ul class="alert">
-        {% for message in messages %}
-        <li>{{ message }}</li>
-        {% endfor %}
-      </ul>
+      <div class="alert alert-danger alert-dismissible show fade" role="alert">
+        <button type="button" class="close" data-dismiss="alert">
+          &times;
+        </button>
+        {% for message in messages %} {{ message }} {% endfor %}
+      </div>
       {% endif %} {% endwith %} {% block content %}{% endblock %}
     </div>
   </body>

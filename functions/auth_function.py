@@ -1,5 +1,5 @@
 import sqlite3
-from flask import flash, redirect, request, url_for
+from flask import flash, request
 from werkzeug.security import generate_password_hash, check_password_hash
 
 DATABASE = "database.db"
@@ -14,6 +14,7 @@ def create_user(username, password):
 
     if existing_user:
         flash('Username already exists', 'error')
+        return False
     else:
         # Hash the password
         hashed_password = generate_password_hash(password, method='pbkdf2:sha1')
@@ -23,8 +24,8 @@ def create_user(username, password):
         conn.commit()
         conn.close()
         flash('Signup successful', 'success')
-        # TODO: redirect not working
-        return redirect(url_for('signin'))
+        
+        return True
 
 def signin_user(username, password):
     conn = sqlite3.connect(DATABASE)
@@ -37,6 +38,7 @@ def signin_user(username, password):
     if user and check_password_hash(user[2], password):
         # User authentication successful
         flash('Signin successful', 'success')
-        return redirect(url_for('dashboard'))
+        return True
     else:
         flash('Invalid username or password', 'error')
+        return False
