@@ -25,7 +25,7 @@ def create_table():
                 id INTEGER PRIMARY KEY,
                 username TEXT NOT NULL,
                 password TEXT NOT NULL,
-                role TEXT DEFAULT 'user',
+                role TEXT CHECK (role IN ('USER', 'MANAGER')) DEFAULT 'USER',
                 cartId INTEGER
             )
         ''')
@@ -48,9 +48,10 @@ def signup():
             return redirect(url_for('signin')) 
 
     return render_template('signup.html')
-    
-@app.route('/signin', methods=['GET', 'POST'])
-def signin():
+
+@app.route('/signin', methods=['GET', 'POST'])    
+@app.route('/signin/<role>', methods=['GET', 'POST'])
+def signin(role="user"):
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
