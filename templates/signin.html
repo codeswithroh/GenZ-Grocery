@@ -8,7 +8,7 @@
   class="card"
 >
   <div class="card-body">
-    <h2 class="card-title">Signin</h2>
+    <h2 class="card-title">{{role}} Signin</h2>
     <form method="post">
       <div class="form-group">
         <label for="username">Username:</label>
@@ -38,10 +38,12 @@
         Signin
       </button>
     </form>
+    {% if role == "USER" %}
     <p class="mt-2">
       Don't have an account?
       <a href="{{ url_for('signup') }}">Signup</a>
     </p>
+    {% endif %}
   </div>
 </div>
 {% endblock %}

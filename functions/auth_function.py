@@ -27,28 +27,15 @@ def create_user(username, password):
         
         return True
 
-def signin_user(username, password):
+def signin_user(username, password, role):
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
 
     # Check if the username exists
-    cursor.execute("SELECT * FROM user WHERE username = ?", (username,))
+    cursor.execute("SELECT * FROM user WHERE username = ? AND role = ?;", (username, role))
     user = cursor.fetchone()
 
-    if user and check_password_hash(user[2], password):
-        # User authentication successful
-        flash('Signin successful', 'success')
-        return True
-    else:
-        flash('Invalid username or password', 'error')
-        return False
-def signin_manager(username, password):
-    conn = sqlite3.connect(DATABASE)
-    cursor = conn.cursor()
-
-    # Check if the username exists
-    cursor.execute("SELECT * FROM user WHERE username = ?", (username,))
-    user = cursor.fetchone()
+    print(user)
 
     if user and check_password_hash(user[2], password):
         # User authentication successful
