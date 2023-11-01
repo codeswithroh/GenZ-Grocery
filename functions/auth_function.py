@@ -35,8 +35,6 @@ def signin_user(username, password, role):
     cursor.execute("SELECT * FROM user WHERE username = ? AND role = ?;", (username, role))
     user = cursor.fetchone()
 
-    print(user)
-
     if user and check_password_hash(user[2], password):
         # User authentication successful
         flash('Signin successful', 'success')

@@ -1,4 +1,5 @@
 import sqlite3
+from werkzeug.security import generate_password_hash, check_password_hash
 
 DATABASE = 'database.db'
 
@@ -33,9 +34,11 @@ def create_manager_creds():
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
 
+    hashed_password = generate_password_hash("password", method='pbkdf2:sha1')
+
     cursor.execute(
         'INSERT INTO user (username, password, role) VALUES (?, ?, ?)',
-        ('pom','pom','MANAGER')
+        ('blacky', hashed_password,'MANAGER')
     )
     conn.commit()
     conn.close()
@@ -49,8 +52,10 @@ def script():
     
     table_name = "user"
     
-    
-    cursor.execute(" SELECT * FROM user WHERE role = 'MANAGER'; ")
+    # " SELECT * FROM user "
+    # " DELETE FROM user WHERE role = 'MANAGER' "
+
+    cursor.execute(" SELECT * FROM user ")
     table_names = cursor.fetchall()
     print(table_names)
     conn.commit()
