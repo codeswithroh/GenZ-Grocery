@@ -29,6 +29,10 @@
         background-color: var(--success);
       }
 
+      .header {
+        background-color: var(--secondary);
+      }
+
       .container {
         padding: 20px;
         margin: auto;
@@ -50,6 +54,16 @@
   </head>
   <body>
     <div class="container">
+      <div class="header fixed-top d-flex justify-content-between px-4 py-2">
+        <div class="logo">GENZ-GROCERY</div>
+        <div class="right-side">
+          {% if authenticated %}
+          <form method="post" action="{{ url_for('logout') }}">
+            <button type="submit" class="btn btn-danger">Logout</button>
+          </form>
+          {% endif %}
+        </div>
+      </div>
       {% with messages = get_flashed_messages(with_categories=true) %} {% if
       messages %} {% for alert_class, message in messages %}
       <div

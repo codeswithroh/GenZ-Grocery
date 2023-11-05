@@ -9,6 +9,11 @@ app.secret_key = 'my_secret_key'  # Change this to a secure secret key
 # SQLite database configuration
 DATABASE = 'database.db'
 
+@app.context_processor
+def set_authentication():
+    user_authenticated = session.get('authenticated')
+    return dict(authenticated=user_authenticated)
+
 # Routes
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -44,17 +49,26 @@ def signin(role="USER"):
 
     return render_template('signin.html', role= role)
 
-@app.route('/dashboard')
+@app.route('/logout', methods=['GET','POST'])
+def logout():
+    print(session.get('authenticated'))
+    if request.method == 'POST':
+        session['authenticated'] = False
+        session.pop('role', None)
+        return redirect(url_for('signin'))
+
+@app.route('/')
 def dashboard():
     if session.get('authenticated'):
         role = session.get('role')
-        return f"Welcome to the Dashboard! Your role is {role}."
+        return render_template('dashboard.html', role=role)
     else:
         return redirect(url_for('signin'))
 
 @app.route("/<path:path>")
 def not_found(path):
     return render_template('404.html'),404
+
 
         
 if __name__ == '__main__':

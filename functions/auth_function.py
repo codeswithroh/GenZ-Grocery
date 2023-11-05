@@ -1,5 +1,5 @@
 import sqlite3
-from flask import flash, request
+from flask import flash, request, session
 from werkzeug.security import generate_password_hash, check_password_hash
 
 DATABASE = "database.db"
@@ -42,3 +42,7 @@ def signin_user(username, password, role):
     else:
         flash('Invalid username or password', 'error')
         return False
+
+
+
+        
