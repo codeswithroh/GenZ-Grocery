@@ -12,21 +12,18 @@ def create_table():
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
     
-    table_name = "user"
+    table_name = "category"
     
     if not table_exists(cursor, table_name):
         cursor.execute('''
-            CREATE TABLE user (
+            CREATE TABLE category (
                 id INTEGER PRIMARY KEY,
-                username TEXT NOT NULL,
-                password TEXT NOT NULL,
-                role TEXT CHECK (role IN ('USER', 'MANAGER')) DEFAULT 'USER',
-                cartId INTEGER
+                name TEXT NOT NULL
             )
         ''')
         conn.commit()
     
-    conn.close()
+        conn.close()
 
 # create_table()
 
@@ -43,7 +40,7 @@ def create_manager_creds():
     conn.commit()
     conn.close()
 
-create_manager_creds()
+# create_manager_creds()
 
 
 def script():

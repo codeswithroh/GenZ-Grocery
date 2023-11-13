@@ -1,0 +1,57 @@
+{% extends 'base.html' %} {% block content %}
+<div style="margin-top: 6em; margin-left: 1em;" class="fixed-top text-left">
+ <a
+      style="border-color: var(--accent); color: var(--accent); border-radius: 10px;pointer-events:stroke;"
+      class="text-center btn btn-outline-primary px-3 py-1"
+      href="{{url_for('dashboard')}}"
+      role="button"
+    >
+      <span class="material-symbols-outlined">
+arrow_back
+      </span>
+    </a>
+</div>
+<div style="background-color: var(--secondary)" class="card w-50 mx-auto">
+  <div class="card-body">
+      <h2 class="card-title">
+        {% if name %}
+        Edit
+        {% else %}
+        Add
+        {% endif %}
+         Category
+      </h2>
+      <form method="post">
+        <div class="form-group">
+          <label for="name">Name:</label>
+          {% if name %}
+          <input
+            type="text"
+            id="name"
+            name="name"
+            value="{{name}}"
+            class="form-control"
+            required
+          />
+          {% else %}
+          <input
+            type="text"
+            id="name"
+            name="name"
+            class="form-control"
+            required
+          />
+          {% endif %}
+        </div>
+        <button
+          style="background-color: #ff8400; border: none"
+          type="submit"
+          class="btn btn-primary"
+        >
+          Submit
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

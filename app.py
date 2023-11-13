@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 from functions.auth_function import create_user, signin_user
+from functions.categories_function import create_category,get_categories,edit_category, delete_category
 
 app = Flask(__name__)
 app.secret_key = 'my_secret_key'  # Change this to a secure secret key
@@ -57,19 +58,49 @@ def logout():
         session.pop('role', None)
         return redirect(url_for('signin'))
 
-@app.route('/')
+@app.route('/',methods=["GET","POST","PUT"])
 def dashboard():
+    categories=[]
     if session.get('authenticated'):
         role = session.get('role')
-        return render_template('dashboard.html', role=role)
+        if request.method == 'GET':
+            categories= get_categories("")
+            print(categories)
+        if request.method == 'POST':
+            return redirect(url_for('addCategories'))
+        return render_template('dashboard.html', role=role, categories=categories)
     else:
         return redirect(url_for('signin'))
+
+@app.route('/categories/add', methods=['GET','POST'])
+def addCategories():
+    if request.method == 'POST':
+        name = request.form['name']
+        category = create_category(name) 
+
+        if category:
+            return redirect(url_for('dashboard'))
+
+    return render_template('categoryForm.html')
+
+@app.route('/categories/edit/<name>', methods=['GET','POST'])
+def editCategories(name=""):
+    if request.method == "POST":
+        newCategoryName = request.form['name']
+        changedCategory = edit_category(name, newCategoryName)
+        return redirect(url_for('dashboard'))
+
+    return render_template('categoryForm.html', name=name)
+
+@app.route('/categories/delete/<name>', methods=['GET','POST'])
+def deleteCategories(name=""):
+    if request.method == "GET":
+        deleteCategory = delete_category(name)
+    return redirect(url_for('dashboard'))
 
 @app.route("/<path:path>")
 def not_found(path):
     return render_template('404.html'),404
-
-
         
 if __name__ == '__main__':
     app.run(debug=True)
