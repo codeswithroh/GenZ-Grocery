@@ -3,6 +3,7 @@ import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 from functions.auth_function import create_user, signin_user
 from functions.categories_function import create_category,get_categories,edit_category, delete_category
+from functions.products_function import create_product, get_product,get_product_by_productId, edit_product, delete_product
 
 app = Flask(__name__)
 app.secret_key = 'my_secret_key'  # Change this to a secure secret key
@@ -61,14 +62,18 @@ def logout():
 @app.route('/',methods=["GET","POST","PUT"])
 def dashboard():
     categories=[]
+    products=[]
     if session.get('authenticated'):
         role = session.get('role')
         if request.method == 'GET':
             categories= get_categories("")
-            print(categories)
+
+            for categoryId,category in categories:
+                product = get_product(categoryId)
+                products.append(product)    
         if request.method == 'POST':
             return redirect(url_for('addCategories'))
-        return render_template('dashboard.html', role=role, categories=categories)
+        return render_template('dashboard.html', role=role, categories=categories, products = products)
     else:
         return redirect(url_for('signin'))
 
@@ -97,6 +102,42 @@ def deleteCategories(name=""):
     if request.method == "GET":
         deleteCategory = delete_category(name)
     return redirect(url_for('dashboard'))
+
+@app.route('/products/add/<categoryId>', methods=['GET','POST'])
+def addProduct(categoryId=0):
+    if request.method == "POST":
+        name = request.form['name']
+        unit = request.form['unit']
+        ratePerUnit = request.form['ratePerUnit']
+        quantity = request.form['quantity']
+
+        product = create_product(name, unit, ratePerUnit, quantity, categoryId) 
+
+        if product:
+            return redirect(url_for('dashboard'))
+    return render_template('productForm.html')
+
+@app.route('/products/delete/<productId>', methods=['GET','POST'])
+def deleteProduct(productId=0):
+    if request.method == "GET":
+        deleteCategory = delete_product(productId)
+    return redirect(url_for('dashboard'))
+
+@app.route('/products/edit/<productId>', methods=['GET','POST'])
+def editProduct(productId=0):
+    product= []
+    if request.method == 'GET':
+        product = get_product_by_productId(productId)
+    if request.method == "POST":
+        # product_id, new_name, new_rate_per_unit, new_unit, new_quantity
+        name = request.form['name']
+        ratePerUnit = request.form['ratePerUnit']
+        unit = request.form['unit']
+        quantity = request.form['quantity']
+        changedCategory = edit_product(productId, name, ratePerUnit, unit, quantity)
+        return redirect(url_for('dashboard'))
+
+    return render_template('productForm.html', product = product, productId = productId)
 
 @app.route("/<path:path>")
 def not_found(path):

@@ -3,22 +3,21 @@
   <div class="fixed-bottom text-right mb-4 mr-4">
     <a
       style="background-color: var(--accent); border-radius: 10px"
-      class="text-center btn-primary px-4 pt-3 pb-2 mt-5 border-0"
+      class="text-center btn-primary px-4 py-3 mt-5 border-0 text-center"
       href="{{url_for('addCategories')}}"
       role="button"
     >
-      <div class="material-symbols-outlined">add</div>
+      <span class="my-auto">Add Category</span>
     </a>
   </div>
   <div
     style="gap: 0.5em; flex-wrap: wrap"
-    class="d-flex justify-content-around align-items-center"
+    class="d-flex justify-content-around align-items-start"
   >
     {% if categories %} {% for index, category in categories %}
     <div
       style="
         background-color: var(--secondary);
-        height: 15em;
         width: 18em;
         box-sizing: border-box;
       "
@@ -27,18 +26,42 @@
       <div class="card-body">
         <div class="card-title"><h3>{{ category }}</h3></div>
         <div class="card-text mb-4">
+          {% if products[index-1] | length == 0 %}
           <p style="overflow: hidden; text-overflow: ellipsis">
             No products added
           </p>
+          {% else %} {% for product in products[index-1] %}
+          <div class="card mb-3">
+            <div class="card-header">{{ product[1] }}</div>
+            <div class="card-body">
+              <div class="btn-group dropend">
+                <button
+                  type="button"
+                  class="btn btn-secondary dropdown-toggle"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  Actions
+                </button>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="{{ url_for("editProduct", productId=product[0]) }}">Edit</a></li>
+
+                  <li><a class="dropdown-item" href="{{url_for("deleteProduct",productId=product[0])}}">Delete</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          {% endfor %} {% endif %}
           <a
             style="
               background-color: var(--accent);
               border-radius: 10px;
               padding-left: 0.8em;
               padding-right: 0.8em;
+              margin-top: 2em;
             "
-            class="text-center rounded-circle btn-primary pt-3 pb-2 mt-5 border-0"
-            href="{{ url_for('addCategories') }}"
+            class="text-center rounded-circle btn-primary pt-3 pb-2 border-0"
+            href="{{ url_for('addProduct', categoryId=index) }}"
             role="button"
           >
             <div class="material-symbols-outlined">add</div>

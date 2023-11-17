@@ -5,27 +5,35 @@ DATABASE = 'database.db'
 
 
 def table_exists(cursor, table_name):
-    cursor.execute(f"SELECT name FROM sqlite_master WHERE type='table' AND name='{table_name}'")
+    cursor.execute(
+        f"SELECT name FROM sqlite_master WHERE type='table' AND name='{table_name}'")
     return cursor.fetchone() is not None
+
 
 def create_table():
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
-    
-    table_name = "category"
-    
+
+    table_name = "product"
+
     if not table_exists(cursor, table_name):
         cursor.execute('''
-            CREATE TABLE category (
-                id INTEGER PRIMARY KEY,
-                name TEXT NOT NULL
-            )
-        ''')
+    CREATE TABLE product (
+        id INTEGER PRIMARY KEY,
+        name TEXT NOT NULL,
+        manufactureDate TEXT,
+        expiryDate TEXT,
+        ratePerUnit REAL NOT NULL,
+        unit TEXT NOT NULL,
+        quantity INTEGER NOT NULL,
+        timeStamp TEXT,
+        categoryId INTEGER NOT NULL,
+        FOREIGN KEY (categoryId) REFERENCES category(id)
+    )
+''')
         conn.commit()
-    
         conn.close()
 
-# create_table()
 
 def create_manager_creds():
     conn = sqlite3.connect(DATABASE)
@@ -35,20 +43,17 @@ def create_manager_creds():
 
     cursor.execute(
         'INSERT INTO user (username, password, role) VALUES (?, ?, ?)',
-        ('blacky', hashed_password,'MANAGER')
+        ('blacky', hashed_password, 'MANAGER')
     )
     conn.commit()
     conn.close()
 
-# create_manager_creds()
-
-
 def script():
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
-    
+
     table_name = "user"
-    
+
     # " SELECT * FROM user "
     # " DELETE FROM user WHERE role = 'MANAGER' "
 
@@ -56,9 +61,20 @@ def script():
     table_names = cursor.fetchall()
     print(table_names)
     conn.commit()
-    
-    
+
     conn.close()
 
-# script()
+def main_function(key):
+    if key == 'create_table':
+        create_table()
+    elif key == 'create_manager_creds':
+        create_manager_creds()
+    elif key == 'script':
+        script()
+    else:
+        print("Invalid key. Please provide a valid key.")
 
+# Example usage:
+main_function('create_table')
+# main_function('create_manager_creds')
+# main_function('script')
