@@ -21,29 +21,21 @@ def edit_product(product_id, new_name, new_rate_per_unit, new_unit, new_quantity
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
 
-    # Check if the new name already exists in the category
-    cursor.execute("SELECT * FROM product WHERE name=?", (new_name,))
-    category_exists = cursor.fetchall()
-
-    if category_exists:
-        flash("Product already exists", 'error')
-        return False
-    else:
-        cursor.execute('''
+    cursor.execute('''
             UPDATE product 
             SET 
                 name=?, 
                 ratePerUnit=?, 
                 unit=?, 
                 quantity=?
-            WHERE id=?
-        ''', (new_name, new_rate_per_unit, new_unit, new_quantity, product_id))
+                WHERE id=?
+                ''', (new_name, new_rate_per_unit, new_unit, new_quantity, product_id))
 
-        conn.commit()
-        conn.close()
+    conn.commit()
+    conn.close()
 
-        flash('Product edited successfully', 'success')
-        return True
+    flash('Product edited successfully', 'success')
+    return True
 
 def delete_product(productId):
     conn = sqlite3.connect(DATABASE)

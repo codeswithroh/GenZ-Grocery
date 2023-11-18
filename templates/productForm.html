@@ -10,9 +10,9 @@
 <div style="background-color: var(--secondary)" class="card w-50 mx-auto">
     <div class="card-body">
         <h2 class="card-title">
-            {% if productId %} 
-        Edit
-        {% else %} 
+            {% if productId %}
+            Edit
+            {% else %}
             Add
             {% endif %}
             Product
@@ -21,29 +21,21 @@
             <div class="form-group">
                 <label for="name">Name:</label>
                 {% if product and product[0][1] %}
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value="{{product[0][1]}}"
-            class="form-control"
-            required
-          />
-          {% else %}
+                <input type="text" id="name" name="name" value="{{product[0][1]}}" class="form-control" required />
+                {% else %}
                 <input type="text" id="name" name="name" class="form-control" required />
                 {% endif %}
             </div>
             <div class="form-group">
                 <label for="unit">Unit:</label>
-                {% if product and product[0][2] %}
-                <select  id="unit" name="unit" class="form-control" required>
-                    <option value="Rs/Kg">Rs/Kg</option>
-                    <option value="Rs/Litre" selected>Rs/Litre</option>
-                    <option value="Rs/Dozens">Rs/Dozens</option>
-                    <option value="Rs/Gram">Rs/Gram</option>
+                {% if product and product[0][5] %}
+                <select id="unit" name="unit" class="form-control form-select" required>
+                   {% for option in ['Rs/Kg','Rs/Litre','Rs/Dozens', 'Rs/Gram'] %}
+                    <option value="{{ option }}" {% if product[0][5] == option %} selected{% endif %}>{{ option }}</option>
+                   {% endfor %}
                 </select>
                 {% else %}
-                <select id="unit" name="unit" class="form-control" required>
+                <select id="unit" name="unit" class="form-control form-select" required>
                     <option value="Rs/Kg">Rs/Kg</option>
                     <option value="Rs/Litre">Rs/Litre</option>
                     <option value="Rs/Dozens">Rs/Dozens</option>
@@ -54,33 +46,19 @@
 
             <div class="form-group">
                 <label for="ratePerUnit">Rate/Unit:</label>
-                <!-- {% if name %}
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value="{{name}}"
-            class="form-control"
-            required
-          />
-          {% else %} -->
+                {% if product and product[0][4] %}
+          <input type="number" id="ratePerUnit" value="{{product[0][4]}}" name="ratePerUnit" class="form-control" required />
+          {% else %}
                 <input type="number" id="ratePerUnit" name="ratePerUnit" class="form-control" required />
-                <!-- {% endif %} -->
+                {% endif %}
             </div>
             <div class="form-group">
                 <label for="quantity">Quantity:</label>
-                <!-- {% if name %}
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value="{{name}}"
-            class="form-control"
-            required
-          />
-          {% else %} -->
+                {% if product and product[0][6] %}
+          <input type="number" id="quantity" value="{{product[0][6]}}" name="quantity" class="form-control" required />
+          {% else %}
                 <input type="number" id="quantity" name="quantity" class="form-control" required />
-                <!-- {% endif %} -->
+                {% endif %}
             </div>
             <button style="background-color: #ff8400; border: none" type="submit" class="btn btn-primary">
                 Submit
