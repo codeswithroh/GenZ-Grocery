@@ -44,12 +44,28 @@ def signin(role="USER"):
         if user_signed_in :
             session['authenticated'] = True
             session['role'] = role
-            return redirect(url_for('dashboard')) 
+            if role == 'MANAGER':
+                return redirect(url_for('dashboard')) 
+            else:
+                return redirect(url_for('userDashboard'))
         else: 
             session['authenticated'] = False
             session.pop('role', None)
 
     return render_template('signin.html', role= role)
+
+@app.route('/user', methods = ['GET','POST'])
+def userDashboard():
+    categories = []
+    products = []
+    if not session['authenticated']:
+        return redirect(url_for('signin'))
+    categories = get_categories()
+    for categoryId,name in categories:
+        product = get_product(categoryId)
+        products.append(product)
+    print(products)
+    return render_template('userDashboard.html', categories = categories, products = products)
 
 @app.route('/logout', methods=['GET','POST'])
 def logout():
