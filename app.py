@@ -14,7 +14,9 @@ DATABASE = 'database.db'
 @app.context_processor
 def set_authentication():
     user_authenticated = session.get('authenticated')
-    return dict(authenticated=user_authenticated)
+    role = session.get('role')
+    userId = session.get('userId')
+    return dict(authenticated=user_authenticated, role=role)
 
 # Routes
 @app.route('/signup', methods=['GET', 'POST'])
@@ -41,13 +43,15 @@ def signin(role="USER"):
 
         user_signed_in = signin_user(username, password, role)
 
-        if user_signed_in :
+        if user_signed_in["success"] :
             session['authenticated'] = True
             session['role'] = role
-            if role == 'MANAGER':
-                return redirect(url_for('dashboard')) 
-            else:
+            if role == 'USER':
+                session['userId'] = user_signed_in["userId"] 
+                session['cartId'] = user_signed_in["cartId"]
                 return redirect(url_for('userDashboard'))
+            else:
+                return redirect(url_for('dashboard')) 
         else: 
             session['authenticated'] = False
             session.pop('role', None)
@@ -154,6 +158,14 @@ def editProduct(productId=0):
         return redirect(url_for('dashboard'))
 
     return render_template('productForm.html', product = product, productId = productId)
+
+@app.route('/user/cart', methods=["GET","POST"])
+def cart():
+    cartId = session.get("cartId")
+    if (cartId):
+        print(cartId,"cartId")
+    return render_template('cart.html',cartId=cartId)
+
 
 @app.route("/<path:path>")
 def not_found(path):

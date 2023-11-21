@@ -14,25 +14,32 @@ def create_table():
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
 
-    table_name = "product"
+    table_name = "association"
 
     if not table_exists(cursor, table_name):
         cursor.execute('''
-    CREATE TABLE product (
-        id INTEGER PRIMARY KEY,
-        name TEXT NOT NULL,
-        manufactureDate TEXT,
-        expiryDate TEXT,
-        ratePerUnit REAL NOT NULL,
-        unit TEXT NOT NULL,
-        quantity INTEGER NOT NULL,
-        timeStamp TEXT,
-        categoryId INTEGER NOT NULL,
-        FOREIGN KEY (categoryId) REFERENCES category(id)
+    CREATE TABLE association (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        cartId INTEGER NOT NULL,
+        productId INTEGER NOT NULL,
+        FOREIGN KEY (cartId) REFERENCES cart(id),
+        FOREIGN KEY (productId) REFERENCES product(id)
     )
 ''')
         conn.commit()
         conn.close()
+
+def delete_table():
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+    table_name = "cart"
+
+    cursor.execute('''
+    DROP TABLE IF EXISTS {}
+    
+'''.format(table_name))
+    conn.commit()
+    conn.close()
 
 
 def create_manager_creds():
@@ -57,11 +64,10 @@ def script():
     # " SELECT * FROM user "
     # " DELETE FROM user WHERE role = 'MANAGER' "
 
-    cursor.execute(" SELECT * FROM user ")
-    table_names = cursor.fetchall()
-    print(table_names)
+    cursor.execute(" select * from user where cartId=3 ")
+    data = cursor.fetchall()
+    print(data)
     conn.commit()
-
     conn.close()
 
 def main_function(key):
@@ -69,6 +75,8 @@ def main_function(key):
         create_table()
     elif key == 'create_manager_creds':
         create_manager_creds()
+    elif key == 'delete_table':
+        delete_table()
     elif key == 'script':
         script()
     else:

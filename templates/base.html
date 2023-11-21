@@ -78,8 +78,20 @@
             alt="logo"
           />
         </div>
-        <div class="right-side">
-          {% if authenticated %}
+        <div
+          style="gap: 1em"
+          class="right-side d-flex justify-content-center align-items-center"
+        >
+          {% if authenticated %} {% if role == 'USER' %}
+          <a
+            href="{{url_for('cart')}}"
+            class="d-flex justify-content-center align-items-center mr-3 text-decoration-none text-dark"
+          >
+            <span class="material-symbols-outlined"> shopping_cart </span>
+            <span>Cart</span>
+          </a>
+
+          {% endif %}
           <form method="post" action="{{ url_for('logout') }}">
             <button type="submit" class="btn btn-outline-danger">Logout</button>
           </form>

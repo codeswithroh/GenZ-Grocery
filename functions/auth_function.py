@@ -11,20 +11,20 @@ def create_user(username, password):
     # Check if the username already exists
     cursor.execute("SELECT * FROM user WHERE username = ?", (username,))
     existing_user = cursor.fetchone()
+    conn.commit()
+    conn.close()
 
     if existing_user:
         flash('Username already exists', 'error')
         return False
     else:
-        # Hash the password
+        cart = cursor.execute("INSERT INTO cart DEFAULT VALUES")
+        cartId = cursor.lastrowid
         hashed_password = generate_password_hash(password, method='pbkdf2:sha1')
-
-        # Insert user into the database
-        cursor.execute("INSERT INTO user (username, password) VALUES (?, ?)", (username, hashed_password))
+        cursor.execute("INSERT INTO user (username, password, cartId) VALUES (?, ?, ?)", (username, hashed_password, cartId))
         conn.commit()
         conn.close()
         flash('Signup successful', 'success')
-        
         return True
 
 def signin_user(username, password, role):
@@ -35,13 +35,17 @@ def signin_user(username, password, role):
     cursor.execute("SELECT * FROM user WHERE username = ? AND role = ?;", (username, role))
     user = cursor.fetchone()
 
+    conn.commit()
+    conn.close()
+
     if user and check_password_hash(user[2], password):
-        # User authentication successful
+        userId = user[0]
+        cartId = user[4]
         flash('Signin successful', 'success')
-        return True
+        return {"userId": userId, "success":True, "cartId": cartId}
     else:
         flash('Invalid username or password', 'error')
-        return False
+        return {"success":False}
 
 
 
