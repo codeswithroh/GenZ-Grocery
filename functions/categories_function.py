@@ -14,6 +14,13 @@ def get_categories(name=""):
     categories = cursor.fetchall()
     return categories
 
+def get_category_by_Id(categoryId=""):
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM category WHERE id = ?",(categoryId,))
+    category = cursor.fetchall()
+    return category
+
 def edit_category(oldName, newName):
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()

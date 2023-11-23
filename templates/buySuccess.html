@@ -1,0 +1,13 @@
+{% extends 'base.html' %} {% block content %}
+<div class="text-center">
+  <img
+    style="width: 20em; height: 15em; object-fit: contain"
+    src="{{ url_for('static', filename='images/success.svg') }}"
+    alt="Success Image"
+  />
+  <h2 class="my-1">Your order is confirmed</h2>
+  <a href="{{ url_for('userDashboard') }}" class="btn btn-success mt-3"
+    >Continue Shopping</a
+  >
+</div>
+{% endblock %}

@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 from functions.auth_function import create_user, signin_user
-from functions.categories_function import create_category,get_categories,edit_category, delete_category
+from functions.categories_function import create_category,get_categories,edit_category, delete_category,get_category_by_Id
 from functions.products_function import create_product, get_product,get_product_by_productId, edit_product, delete_product
 
 app = Flask(__name__)
@@ -166,6 +166,28 @@ def cart():
         print(cartId,"cartId")
     return render_template('cart.html',cartId=cartId)
 
+@app.route('/buy/product/<productId>', methods=["GET","POST"])
+def buyProduct(productId=0):
+    if request.method == 'GET':
+        product = get_product_by_productId(productId)
+        categoryId = product[0][8]
+        category = get_category_by_Id(categoryId)
+        categoryName = category[0][1]
+        productName = product[0][1]
+        productTotalQuantity = product[0][6]
+        productPrice = product[0][4]
+        
+        unit = product[0][5]
+        productUnit = unit.split('/')[1].strip().lower()
+        # [(2, 'Onion', None, None, 80.0, 'Rs/Dozens', 50, None, 1)]
+    
+    if request.method == 'POST':
+        return redirect(url_for("buy_success"))
+    return render_template('buyProduct.html',categoryName = categoryName, productName=productName, productTotalQuantity = productTotalQuantity, productPrice=productPrice, productUnit = productUnit)
+
+@app.route("/buy/product/success",methods=["GET","POST"])
+def buy_success():
+    return render_template('buySuccess.html')
 
 @app.route("/<path:path>")
 def not_found(path):
